@@ -1,0 +1,16 @@
+[package]
+name = "simple-future"
+version = "0.1.0"
+authors = ["apiraino <apiraino@users.noreply.github.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# hyper = "0.12.32"
+tokio = "0.1.22"
+futures = "0.1.28"
+# hyper-tls = "0.3.2"
+# serde = "1.0.95"
+# serde_json = "1.0.40"
+# serde_derive = "1.0.95"

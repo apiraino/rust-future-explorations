@@ -1,0 +1,11 @@
+[package]
+name = "hyper-spawn"
+version = "0.1.0"
+authors = ["apiraino <apiraino@users.noreply.github.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = "0.1.22"
+hyper = "0.12.33"
