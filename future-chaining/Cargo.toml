@@ -1,0 +1,9 @@
+[package]
+name = "futures-chaining"
+version = "0.1.0"
+authors = ["apiraino <apiraino@users.noreply.github.com>"]
+edition = "2018"
+
+[dependencies]
+futures = "0.1.28"
+tokio = "0.1.22"

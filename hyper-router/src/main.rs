@@ -18,7 +18,7 @@ struct RespStruct {
     url: String,
 }
 
-fn fetch_data() -> impl Future<Item = future::FutureResult<RespStruct, String>, Error = ()> {
+fn fetch_data() -> impl Future<Item = RespStruct, Error = ()> {
     let uri: Uri = "http://httpbin.org/get".parse().expect("Cannot parse URL");
     Client::new()
         .get(uri)
@@ -52,7 +52,7 @@ fn fetch_data() -> impl Future<Item = future::FutureResult<RespStruct, String>, 
             // here parse the FutureResult
             // serialize into a validated Struct
             let decoded: RespStruct = serde_json::from_slice(&body).expect("Couldn't deserialize");
-            future::ok(decoded)
+            decoded
         })
 }
 
