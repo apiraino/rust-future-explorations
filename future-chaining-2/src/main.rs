@@ -59,16 +59,16 @@ impl MyClient {
         let fut = client.request(req);
 
         fut.and_then(|res| {
-            eprintln!("Got {}", res.status());
+            eprintln!("Request one: got {}", res.status());
             let resp_data = res.into_body().concat2();
             resp_data
         })
         .map_err(|err| eprintln!("error: {}", err))
-        .map(|body| format!("request one succeded: {:?}", body))
+        .map(|body| format!("{:?}", body))
     }
 
     fn request_two(&self, param: String) -> impl Future<Item = String, Error = ()> {
-        eprintln!("Request two: {:?}", param);
+        eprintln!("Request two got params: {:?}", param);
         let url: Uri = "https://httpbin.org/get".parse().unwrap();
         let https = HttpsConnector::new(4).expect("TLS initialization failed");
         let client = Client::builder().build::<_, hyper::Body>(https);
@@ -80,12 +80,12 @@ impl MyClient {
         let fut = client.request(req);
 
         fut.and_then(|res| {
-            eprintln!("Got {}", res.status());
+            eprintln!("Request two: got {}", res.status());
             let resp_data = res.into_body().concat2();
             resp_data
         })
         .map_err(|err| eprintln!("error: {}", err))
-        .map(|body| format!("request two succeded: {:?}", body))
+        .map(|body| format!("{:?}", body))
     }
 }
 
