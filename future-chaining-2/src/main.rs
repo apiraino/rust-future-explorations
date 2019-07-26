@@ -16,19 +16,14 @@ impl MyClient {
         MyClient {}
     }
 
-    pub fn all_requests(&self) -> impl Future<Item = String, Error = ()> + '_ {
+    pub fn all_requests(self) -> impl Future<Item = String, Error = ()> {
         let f1_res = self.request_one();
-        let final_response = f1_res
-            // .map(|resp1| {
-            //     eprintln!("req one resp: {}", resp1);
-            //     resp1
-            // })
-            .and_then(move |resp1| {
-                self.request_two(resp1).and_then(|resp2| {
-                    eprintln!("req two resp: {}", resp2);
-                    future::ok(resp2)
-                })
-            });
+        let final_response = f1_res.and_then(move |resp1| {
+            self.request_two(resp1).and_then(|resp2| {
+                eprintln!("req two resp: {}", resp2);
+                future::ok(resp2)
+            })
+        });
         final_response
     }
 
