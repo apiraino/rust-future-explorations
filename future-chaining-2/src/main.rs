@@ -2,28 +2,46 @@ use futures::future;
 use tokio;
 
 use hyper::rt::{Future, Stream};
+use hyper::{client::HttpConnector, Client, Uri};
 use hyper::{Body, Method, Request};
-use hyper::{Client, Uri};
 use hyper_tls::HttpsConnector;
 
 // This example shows how to chain Futures inside a single Impl block
-// FIXME: it is broken due do a lifetime error: can it be fixed?
 
-struct MyClient {}
+// The trick here is to make che http client clonable
+// and clone it before running the second future.
+// all_requests() takes ownership of the http client (&self) and consume it,
+// so it won't available to the second nested future
+
+#[derive(Clone)]
+struct MyClient {
+    client: Client<HttpsConnector<HttpConnector>, hyper::Body>,
+}
 
 impl MyClient {
     pub fn new() -> MyClient {
-        MyClient {}
+        let https = HttpsConnector::new(4).expect("TLS initialization failed");
+        let client = Client::builder().build::<_, hyper::Body>(https);
+        MyClient { client }
     }
 
-    pub fn all_requests(self) -> impl Future<Item = String, Error = ()> {
+    pub fn all_requests(&self) -> impl Future<Item = String, Error = ()> {
         let f1_res = self.request_one();
-        let final_response = f1_res.and_then(move |resp1| {
-            self.request_two(resp1).and_then(|resp2| {
-                eprintln!("req two resp: {}", resp2);
-                future::ok(resp2)
+        // Notice: cloning the whole client, the second future will use it
+        let client_cloned = self.clone();
+        let final_response = f1_res
+            .map(|resp_future_one| {
+                eprintln!("future one returned: {}", resp_future_one);
+                resp_future_one
             })
-        });
+            .and_then(move |resp1| {
+                client_cloned
+                    .request_two(resp1)
+                    .and_then(|resp_future_two| {
+                        eprintln!("future two returned: {}", resp_future_two);
+                        future::ok(resp_future_two)
+                    })
+            });
         final_response
     }
 
