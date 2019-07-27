@@ -1,8 +1,6 @@
-use std::time::{Duration, Instant};
-
-use tokio::timer::Delay;
-
 use futures::future::Future;
+use std::time::{Duration, Instant};
+use tokio::timer::Delay;
 
 fn svc_wait(t: u64) -> impl Future<Item = i32, Error = ()> {
     println!("[start] waiting...");
